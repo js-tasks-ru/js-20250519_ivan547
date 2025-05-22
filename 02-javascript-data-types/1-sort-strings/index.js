@@ -12,10 +12,7 @@ export function sortStrings(arr, param = 'asc') {
 
   const sortDirection = param === 'asc' ? 1 : -1;
 
-  return [...arr].sort((stringA, stringB) => {
-    const lowercaseCompare = stringA.toLowerCase().localeCompare(stringB.toLowerCase(), 'ru');
-    if (lowercaseCompare) return lowercaseCompare * sortDirection;
-    if (stringA[0] !== stringB[0]) return (stringB[0] === stringB[0].toUpperCase() ? 1 : -1) * sortDirection;
-    return stringA.localeCompare(stringB, 'ru', { sensitivity: 'variant' }) * sortDirection;
-  });
+  return [...arr].sort((stringA, stringB) =>
+    sortDirection * stringA.localeCompare(stringB, ['ru', 'en'], { sensitivity: 'variant', caseFirst: 'upper' })
+  );
 }
