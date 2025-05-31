@@ -1,3 +1,9 @@
+/**
+ * 
+ * By Ivan Silantev 
+ * 
+ */
+
 export default class DoubleSlider {
   element = null;
   subElements = {};

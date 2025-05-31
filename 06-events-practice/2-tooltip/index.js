@@ -1,3 +1,9 @@
+/**
+ * 
+ * By Ivan Silantev 
+ * 
+ */
+
 class Tooltip {
   static instance;
 
@@ -19,7 +25,6 @@ class Tooltip {
   }
 
   render(text) {
-    // Создание элемента при первом рендере
     if (!this.element) {
       const div = document.createElement('div');
       div.className = 'tooltip';
