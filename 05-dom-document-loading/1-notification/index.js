@@ -55,16 +55,11 @@ export default class NotificationMessage {
   remove() {
     if (this.element) {
       this.element.remove();
-    }
-
-    if (NotificationMessage.activeNotification === this) {
-      NotificationMessage.activeNotification = null;
-    }
-
-    clearTimeout(this.timerId);
+    }    
   }
 
   destroy() {
     this.remove();
+    clearTimeout(this.timerId);
   }
 }
