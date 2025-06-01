@@ -4,19 +4,6 @@
  * 
  */
 
-export function sortStrings(arr, param = 'asc', key) {
-  if (!Array.isArray(arr)) return [];
-
-  const sortDirection = param === 'asc' ? 1 : -1;
-
-  return [...arr].sort((a, b) =>
-    sortDirection * a[key].localeCompare(b[key], ['ru', 'en'], {
-      sensitivity: 'variant',
-      caseFirst: 'upper',
-    })
-  );
-}
-
 export default class SortableTable {
   element = null;
   subElements = {};
