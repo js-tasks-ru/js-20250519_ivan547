@@ -8,13 +8,13 @@
  */
 export function invertObj(obj) {
   if (obj === undefined) {
-    return undefined; 
+    return; 
   }
 
   const inverted = {};
 
   for (const [key, value] of Object.entries(obj)) {
-    inverted[String(value)] = key;
+    inverted[value] = key;
   }
 
   return inverted;

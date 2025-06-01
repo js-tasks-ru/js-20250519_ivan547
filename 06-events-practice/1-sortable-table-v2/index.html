@@ -8,7 +8,7 @@
 <div id="root"></div>
 
 <script type="module">
-  import SortableTable from './index.js';
+  import ExtendedSortableTable from './index.js';
   import data from './products-data.js';
 
   const headerConfig = [
@@ -50,7 +50,7 @@
     },
   ];
 
-  const sortableTable = new SortableTable(headerConfig, {
+  const sortableTable = new ExtendedSortableTable(headerConfig, {
     data,
     sorted: {
       id: headerConfig.find(item => item.sortable).id,
