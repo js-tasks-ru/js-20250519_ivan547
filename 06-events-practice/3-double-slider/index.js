@@ -147,6 +147,8 @@ export default class DoubleSlider {
   }
 
   destroy() {
+    document.removeEventListener('pointermove', this.onPointerMove);
+    document.removeEventListener('pointerup', this.onPointerUp);
     this.remove();
     this.element = null;
   }

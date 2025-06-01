@@ -195,6 +195,7 @@ export default class SortableTable {
   }
 
   destroy() {
+    this.subElements.header.removeEventListener('pointerdown', this.onHeaderClick);
     if (this.element) {
       this.element.remove();
     }
