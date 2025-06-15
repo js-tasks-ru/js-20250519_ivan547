@@ -1,3 +1,9 @@
+/**
+ * 
+ * By Ivan Silantev 
+ * 
+ */
+
 function formatDate(d) {
   return d.toLocaleDateString('ru-RU', {
     day: '2-digit',
@@ -106,7 +112,6 @@ export default class RangePicker {
   }
 
   _initSelector() {
-    // build static controls and calendar wrappers once
     this.selector.innerHTML = `
       <div class="rangepicker__selector-arrow"></div>
       <div class="rangepicker__selector-control-left" data-action="prev"></div>
