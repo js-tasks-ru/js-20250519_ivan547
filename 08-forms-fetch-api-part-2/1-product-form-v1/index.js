@@ -19,9 +19,7 @@ export default class ProductForm {
     this.categories = [];
   }
 
-  // Тест ожидает, что у компонента есть метод save()
   save() {
-    // Просто вызываем onSubmit, подсовывая заглушку event.preventDefault
     return this.onSubmit({ preventDefault: () => {} });
   }
 
@@ -120,7 +118,6 @@ export default class ProductForm {
 
     const form = wrapper.firstElementChild;
 
-    // Заполняем подкатегории
     const select = form.querySelector('#subcategory');
     for (const category of this.categories) {
       for (const sub of category.subcategories) {
@@ -130,8 +127,7 @@ export default class ProductForm {
         select.append(option);
       }
     }
-
-    // Рендерим уже существующие картинки
+    
     const imagesContainer = form.querySelector('[data-element="imageListContainer"]');
     if (Array.isArray(this.data.images) && this.data.images.length) {
       const ul = document.createElement('ul');
