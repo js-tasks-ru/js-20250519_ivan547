@@ -1,7 +1,7 @@
 /**
- * 
- * By Ivan Silantev 
- * 
+ *
+ * By Ivan Silantev
+ *
  */
 
 import fetchJson from './utils/fetch-json.js';
@@ -13,6 +13,8 @@ export default class SortableTableV3 extends ExtendedSortableTable {
   loading = false;
   endReached = false;
   initialized = false;
+  headerClickHandler = null;
+  scrollHandler = null;
 
   constructor(headerConfig = [], options = {}) {
     super(headerConfig, options);
@@ -25,26 +27,26 @@ export default class SortableTableV3 extends ExtendedSortableTable {
     this.start         = start;
     this.end           = start + step;
     this.data          = [];
-    this.initialized = true;
+    this.initialized   = true;
 
     this._bindEvents();
-    this._testLoadPing()
+    this._testLoadPing();
   }
 
   _testLoadPing() {
-  const testUrl = new URL(this.url);
-  testUrl.searchParams.set('_start', this.start);
-  testUrl.searchParams.set('_end',   this.end);
-  testUrl.searchParams.set('_sort',  this.sorted.id);
-  testUrl.searchParams.set('_order', this.sorted.order);
-  fetchJson(testUrl).catch(() => {});
-}
+    const testUrl = new URL(this.url);
+    testUrl.searchParams.set('_start', this.start);
+    testUrl.searchParams.set('_end',   this.end);
+    testUrl.searchParams.set('_sort',  this.sorted.id);
+    testUrl.searchParams.set('_order', this.sorted.order);
+    fetchJson(testUrl).catch(() => {});
+  }
 
   async render() {
     const el = super.render();
     this._bindEvents();
 
-    this.data = []; 
+    this.data = [];
     this.start = 0;
     this.end = this.step;
     this.endReached = false;
@@ -84,44 +86,14 @@ export default class SortableTableV3 extends ExtendedSortableTable {
   }
 
   getRow(item) {
-    const cells = this.headerConfig.map(({ id }) => {
-      switch (id) {
-        case 'images': {
-          const imgSrc = Array.isArray(item.images) && item.images.length
-            ? item.images[0].url
-            : '';
-          return `
-            <div class="sortable-table__cell">
-              <img class="sortable-table-image"
-                  src="${imgSrc}"
-                  alt="Image">
-            </div>
-          `;
-        }
-        case 'title':
-          return `<div class="sortable-table__cell">${item.title}</div>`;
-        case 'category': {
-          const tooltipHtml = `
-            <div class="sortable-table-tooltip">
-              <span class="sortable-table-tooltip__category">${item.category}</span> /
-              <b class="sortable-table-tooltip__subcategory">${item.subcategory}</b>
-            </div>
-          `.trim();
-          return `
-            <div class="sortable-table__cell">
-              <span data-tooltip="${tooltipHtml}">
-                ${item.category}
-              </span>
-            </div>
-          `;
-        }
-        case 'status': {
-          const text = item.status ? 'Active' : 'Inactive';
-          return `<div class="sortable-table__cell">${text}</div>`;
-        }
-        default:
-          return `<div class="sortable-table__cell">${item[id]}</div>`;
-      }
+    const cells = this.headerConfig.map(column => {
+      const value   = item[column.id];
+      const content = column.template
+        ? column.template(value, item)
+        : `${value}`;
+      return `
+        <div class="sortable-table__cell">${content}</div>
+      `;
     }).join('');
 
     const href = item.link || `/products/${item.id}`;
@@ -158,30 +130,41 @@ export default class SortableTableV3 extends ExtendedSortableTable {
   }
 
   _bindEvents() {
+    if (this.headerClickHandler && this.subElements.header) {
+      this.subElements.header.removeEventListener('pointerdown', this.headerClickHandler);
+    }
+    if (this.scrollHandler) {
+      window.removeEventListener('scroll', this.scrollHandler);
+    }
+
     this.subElements.header.replaceWith(this.subElements.header.cloneNode(true));
     this.subElements.header = this.element.querySelector('[data-element="header"]');
 
-    this.subElements.header.addEventListener('pointerdown', e => {
+    this.headerClickHandler = e => {
       const cell = e.target.closest('[data-id]');
       if (!cell || cell.dataset.sortable !== 'true') return;
       const { id, order = 'asc' } = cell.dataset;
       const next = order === 'asc' ? 'desc' : 'asc';
       this.sort(id, next);
-    });
+    };
+    this.subElements.header.addEventListener('pointerdown', this.headerClickHandler);
 
-    if (this.removeScrollHandler) this.removeScrollHandler();
-    const onScroll = () => {
+    this.scrollHandler = () => {
       const bottom = document.documentElement.getBoundingClientRect().bottom;
       if (bottom < document.documentElement.clientHeight + 100) {
         this.loadData().then(() => this.renderBody());
       }
     };
-    window.addEventListener('scroll', onScroll);
-    this.removeScrollHandler = () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('scroll', this.scrollHandler);
   }
 
   destroy() {
+    if (this.headerClickHandler && this.subElements.header) {
+      this.subElements.header.removeEventListener('pointerdown', this.headerClickHandler);
+    }
+    if (this.scrollHandler) {
+      window.removeEventListener('scroll', this.scrollHandler);
+    }
     super.destroy();
-    if (this.removeScrollHandler) this.removeScrollHandler();
   }
 }
